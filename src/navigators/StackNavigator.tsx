@@ -20,8 +20,8 @@ const StackNavigator = () => {
         },
       }}
     >
-      <RootStack.Screen name="MapScreen" component={MapScreen} />
       <RootStack.Screen name="PermissionsScreen" component={PermissionsScreen} />
+      <RootStack.Screen name="MapScreen" component={MapScreen} />
     </RootStack.Navigator>
   );
 };
