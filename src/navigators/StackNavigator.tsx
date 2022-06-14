@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import MapScreen from '../screens/MapScreen';
 import PermissionsScreen from '../screens/PermissionsScreen';
+import { PermissionsContext } from '../context';
+import { Loading } from '../components/Loading';
 
 export type RootStackParamList = {
   MapScreen: undefined;
@@ -11,6 +13,11 @@ export type RootStackParamList = {
 const RootStack = createStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
+  const { locationStatus } = useContext(PermissionsContext);
+
+  if (locationStatus === 'unavailable') {
+    return <Loading />;
+  }
   return (
     <RootStack.Navigator
       screenOptions={{
@@ -20,8 +27,11 @@ const StackNavigator = () => {
         },
       }}
     >
-      <RootStack.Screen name="PermissionsScreen" component={PermissionsScreen} />
-      <RootStack.Screen name="MapScreen" component={MapScreen} />
+      {locationStatus === 'granted' ? (
+        <RootStack.Screen name="MapScreen" component={MapScreen} />
+      ) : (
+        <RootStack.Screen name="PermissionsScreen" component={PermissionsScreen} />
+      )}
     </RootStack.Navigator>
   );
 };
