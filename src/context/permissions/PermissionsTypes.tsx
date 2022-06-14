@@ -11,4 +11,4 @@ export interface PermissionsContextProps extends PermissionsState {
 
 export type PermissionsActions =
   | { type: 'ASK_LOCATION_PERMISSION'; payload: PermissionStatus }
-  | { type: 'CHECK_LOCATION_PERMISSION' };
+  | { type: 'CHECK_LOCATION_PERMISSION'; payload: PermissionStatus };

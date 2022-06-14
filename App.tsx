@@ -5,11 +5,11 @@ import { PermissionsProvider } from './src/context';
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <AppState>
+    <AppState>
+      <NavigationContainer>
         <StackNavigator />
-      </AppState>
-    </NavigationContainer>
+      </NavigationContainer>
+    </AppState>
   );
 };
 

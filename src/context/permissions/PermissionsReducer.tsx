@@ -10,6 +10,7 @@ const permissionsReducer = (state: PermissionsState, action: PermissionsActions)
     case 'CHECK_LOCATION_PERMISSION':
       return {
         ...state,
+        locationStatus: action.payload,
       };
     default:
       return state;

@@ -1,8 +1,8 @@
-import React, { createContext, useReducer } from 'react';
+import React, { createContext, useEffect, useReducer } from 'react';
+import { AppState, Platform } from 'react-native';
 import { PermissionsState, PermissionsContextProps } from './PermissionsTypes';
 import { permissionsReducer } from './PermissionsReducer';
-import { Platform } from 'react-native';
-import { PERMISSIONS, PermissionStatus, request } from 'react-native-permissions';
+import { PERMISSIONS, PermissionStatus, request, check } from 'react-native-permissions';
 
 export const PermissionsContext = createContext({} as PermissionsContextProps);
 
@@ -21,7 +21,26 @@ export const PermissionsProvider = ({ children }: any) => {
     dispatch({ type: 'ASK_LOCATION_PERMISSION', payload: locationStatus });
   };
 
-  const checkLocationPermission = () => dispatch({ type: 'CHECK_LOCATION_PERMISSION' });
+  const checkLocationPermission = async () => {
+    const permission =
+      Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
+    const locationStatus: PermissionStatus = await check(permission);
+
+    dispatch({ type: 'CHECK_LOCATION_PERMISSION', payload: locationStatus });
+  };
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') {
+        return;
+      }
+      checkLocationPermission();
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   return (
     <PermissionsContext.Provider
