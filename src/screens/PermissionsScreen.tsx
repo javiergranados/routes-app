@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
+import { PurpleButton } from '../components/PurpleButton';
 import { PermissionsContext } from '../context';
 
 const PermissionsScreen = () => {
@@ -7,9 +8,9 @@ const PermissionsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Permisions screen</Text>
-      <Button title="Ask for location permission" onPress={askLocationPermission} />
-      <Text>{JSON.stringify({ locationStatus }, null, 5)}</Text>
+      <Text style={styles.title}>The location permission is required to use this application</Text>
+      <PurpleButton title="Permission" onPress={askLocationPermission} />
+      <Text style={{ marginTop: 20 }}>{JSON.stringify({ locationStatus }, null, 5)}</Text>
     </View>
   );
 };
@@ -21,8 +22,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 20,
-    marginBottom: 60,
+    width: 250,
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 20,
   },
 });
 
