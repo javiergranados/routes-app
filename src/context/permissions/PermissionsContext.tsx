@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useReducer } from 'react';
 import { AppState, Platform } from 'react-native';
 import { PermissionsState, PermissionsContextProps } from './PermissionsTypes';
 import { permissionsReducer } from './PermissionsReducer';
-import { PERMISSIONS, PermissionStatus, request, check } from 'react-native-permissions';
+import { PERMISSIONS, PermissionStatus, request, check, openSettings } from 'react-native-permissions';
 
 export const PermissionsContext = createContext({} as PermissionsContextProps);
 
@@ -18,6 +18,9 @@ export const PermissionsProvider = ({ children }: any) => {
       Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
     const locationStatus: PermissionStatus = await request(permission);
 
+    if(locationStatus === "blocked"){
+      openSettings();
+    }
     dispatch({ type: 'ASK_LOCATION_PERMISSION', payload: locationStatus });
   };
 
