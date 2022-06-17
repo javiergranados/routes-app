@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
 import Geolocation from '@react-native-community/geolocation';
-import { Location } from '../interfaces/map';
+import { Location, Region } from '../interfaces/map';
 
-const INITIAL_LOCATION: Location = {
+export const INITIAL_LOCATION: Location = {
   longitude: 40.4165,
   latitude: -3.70256,
 };
 
+export const INITIAL_REGION: Region = {
+  ...INITIAL_LOCATION,
+  latitudeDelta: 0.0922,
+  longitudeDelta: 0.0421,
+};
+
 const useLocation = () => {
   const [hasLocation, setHasLocation] = useState<boolean>(false);
-  const [userLocation, setUserLocation] = useState<Location>(INITIAL_LOCATION);
+  const [initialLocation, setInitialLocation] = useState<Location>(INITIAL_LOCATION);
 
   const getUserLocation = (): Promise<Location> => {
     return new Promise((resolve, reject) => {
@@ -28,7 +34,7 @@ const useLocation = () => {
 
   useEffect(() => {
     getUserLocation().then((location) => {
-      setUserLocation({
+      setInitialLocation({
         latitude: location.latitude,
         longitude: location.longitude,
       });
@@ -36,7 +42,7 @@ const useLocation = () => {
     });
   }, []);
 
-  return { hasLocation, userLocation, getUserLocation };
+  return { hasLocation, initialLocation, getUserLocation };
 };
 
 export { useLocation };
