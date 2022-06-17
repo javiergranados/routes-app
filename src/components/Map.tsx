@@ -5,12 +5,17 @@ import { Fab } from './Fab';
 import { Loading } from './Loading';
 
 export const Map = () => {
+  const { hasLocation, initialLocation, userLocation, getUserLocation, watchUserLocation, stopWatchUserLocation } =
+    useLocation();
+
   const mapViewRef = useRef<MapView>();
-  const { hasLocation, initialLocation, getUserLocation } = useLocation();
+  const followingUserPosition = useRef<boolean>(true);
 
   const centerPoition = async () => {
     const location = await getUserLocation();
     mapViewRef.current?.animateCamera({ center: location });
+
+    followingUserPosition.current = true;
   };
 
   useEffect(() => {
@@ -30,6 +35,20 @@ export const Map = () => {
     }
   }, [initialLocation]);
 
+  useEffect(() => {
+    if (!followingUserPosition.current) {
+      return;
+    }
+    mapViewRef.current?.animateCamera({ center: userLocation });
+  }, [userLocation]);
+
+  useEffect(() => {
+    watchUserLocation();
+    return () => {
+      stopWatchUserLocation();
+    };
+  }, []);
+
   if (!hasLocation) {
     <Loading />;
   }
@@ -40,6 +59,7 @@ export const Map = () => {
         style={{ flex: 1 }}
         showsUserLocation
         initialRegion={INITIAL_REGION}
+        onTouchStart={() => (followingUserPosition.current = false)}
       />
       <Fab
         iconName="locate-outline"
