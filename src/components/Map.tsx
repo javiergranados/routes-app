@@ -1,12 +1,21 @@
-import React, { useEffect, useRef } from 'react';
-import MapView from 'react-native-maps';
+import React, { useEffect, useRef, useState } from 'react';
+import MapView, { Polyline } from 'react-native-maps';
 import { INITIAL_LOCATION, INITIAL_REGION, useLocation } from '../hooks/useLocation';
 import { Fab } from './Fab';
 import { Loading } from './Loading';
 
 export const Map = () => {
-  const { hasLocation, initialLocation, userLocation, getUserLocation, watchUserLocation, stopWatchUserLocation } =
-    useLocation();
+  const {
+    hasLocation,
+    initialLocation,
+    userLocation,
+    routeLines,
+    getUserLocation,
+    watchUserLocation,
+    stopWatchUserLocation,
+  } = useLocation();
+
+  const [showPolyline, setShowPolyline] = useState<boolean>(true);
 
   const mapViewRef = useRef<MapView>();
   const followingUserPosition = useRef<boolean>(true);
@@ -60,6 +69,19 @@ export const Map = () => {
         showsUserLocation
         initialRegion={INITIAL_REGION}
         onTouchStart={() => (followingUserPosition.current = false)}
+      >
+        {showPolyline && <Polyline coordinates={routeLines} strokeColor="black" strokeWidth={3} />}
+      </MapView>
+      <Fab
+        iconName="brush-outline"
+        onPress={() => {
+          setShowPolyline((prevValue) => !prevValue);
+        }}
+        style={{
+          position: 'absolute',
+          bottom: 80,
+          right: 20,
+        }}
       />
       <Fab
         iconName="locate-outline"

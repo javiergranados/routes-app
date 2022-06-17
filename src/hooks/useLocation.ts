@@ -17,6 +17,8 @@ const useLocation = () => {
   const [hasLocation, setHasLocation] = useState<boolean>(false);
   const [initialLocation, setInitialLocation] = useState<Location>(INITIAL_LOCATION);
   const [userLocation, setUserLocation] = useState<Location>(INITIAL_LOCATION);
+  const [routeLines, setRouteLines] = useState<Location[]>([]);
+
   const watchPositionId = useRef<number>();
 
   const getUserLocation = (): Promise<Location> => {
@@ -35,6 +37,7 @@ const useLocation = () => {
     watchPositionId.current = Geolocation.watchPosition(
       ({ coords }) => {
         setUserLocation(coords);
+        setRouteLines((prevRouteLines) => [...prevRouteLines, coords]);
       },
       (err) => console.log(err),
       { enableHighAccuracy: true, distanceFilter: 10 },
@@ -51,11 +54,20 @@ const useLocation = () => {
     getUserLocation().then((location) => {
       setInitialLocation(location);
       setUserLocation(location);
+      setRouteLines((prevRouteLines) => [...prevRouteLines, location]);
       setHasLocation(true);
     });
   }, []);
 
-  return { hasLocation, initialLocation, userLocation, getUserLocation, watchUserLocation, stopWatchUserLocation };
+  return {
+    hasLocation,
+    initialLocation,
+    userLocation,
+    routeLines,
+    getUserLocation,
+    watchUserLocation,
+    stopWatchUserLocation,
+  };
 };
 
 export { useLocation };
