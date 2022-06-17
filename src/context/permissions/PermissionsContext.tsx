@@ -18,7 +18,7 @@ export const PermissionsProvider = ({ children }: any) => {
       Platform.OS === 'ios' ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION;
     const locationStatus: PermissionStatus = await request(permission);
 
-    if(locationStatus === "blocked"){
+    if (locationStatus === 'blocked') {
       openSettings();
     }
     dispatch({ type: 'ASK_LOCATION_PERMISSION', payload: locationStatus });
@@ -31,6 +31,10 @@ export const PermissionsProvider = ({ children }: any) => {
 
     dispatch({ type: 'CHECK_LOCATION_PERMISSION', payload: locationStatus });
   };
+
+  useEffect(() => {
+    checkLocationPermission();
+  }, []);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (state) => {
