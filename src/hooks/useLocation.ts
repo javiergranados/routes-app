@@ -9,23 +9,34 @@ const INITIAL_LOCATION: Location = {
 
 const useLocation = () => {
   const [hasLocation, setHasLocation] = useState<boolean>(false);
-  const [location, setLocation] = useState<Location>(INITIAL_LOCATION);
+  const [userLocation, setUserLocation] = useState<Location>(INITIAL_LOCATION);
+
+  const getUserLocation = (): Promise<Location> => {
+    return new Promise((resolve, reject) => {
+      Geolocation.getCurrentPosition(
+        ({ coords }) => {
+          resolve({
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          });
+        },
+        (err) => reject({ err }),
+        { enableHighAccuracy: true },
+      );
+    });
+  };
 
   useEffect(() => {
-    Geolocation.getCurrentPosition(
-      ({ coords }) => {
-        setLocation({
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-        });
-        setHasLocation(true);
-      },
-      console.log, // error
-      { enableHighAccuracy: true },
-    );
+    getUserLocation().then((location) => {
+      setUserLocation({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      });
+      setHasLocation(true);
+    });
   }, []);
 
-  return { hasLocation, location };
+  return { hasLocation, userLocation, getUserLocation };
 };
 
 export { useLocation };
