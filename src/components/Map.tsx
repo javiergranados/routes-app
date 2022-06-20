@@ -27,6 +27,10 @@ export const Map = () => {
     followingUserPosition.current = true;
   };
 
+  if (!hasLocation) {
+    <Loading />;
+  }
+
   useEffect(() => {
     if (
       initialLocation.latitude !== INITIAL_LOCATION.latitude ||
@@ -58,9 +62,6 @@ export const Map = () => {
     };
   }, []);
 
-  if (!hasLocation) {
-    <Loading />;
-  }
   return (
     <>
       <MapView

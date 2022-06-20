@@ -20,6 +20,7 @@ const useLocation = () => {
   const [routeLines, setRouteLines] = useState<Location[]>([]);
 
   const watchPositionId = useRef<number>();
+  const isMounted = useRef<boolean>(true);
 
   const getUserLocation = (): Promise<Location> => {
     return new Promise((resolve, reject) => {
@@ -36,6 +37,9 @@ const useLocation = () => {
   const watchUserLocation = () => {
     watchPositionId.current = Geolocation.watchPosition(
       ({ coords }) => {
+        if (!isMounted.current) {
+          return;
+        }
         setUserLocation(coords);
         setRouteLines((prevRouteLines) => [...prevRouteLines, coords]);
       },
@@ -52,11 +56,20 @@ const useLocation = () => {
 
   useEffect(() => {
     getUserLocation().then((location) => {
+      if (!isMounted.current) {
+        return;
+      }
       setInitialLocation(location);
       setUserLocation(location);
       setRouteLines((prevRouteLines) => [...prevRouteLines, location]);
       setHasLocation(true);
     });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
   return {
